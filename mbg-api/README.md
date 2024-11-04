@@ -5,7 +5,7 @@
 ```bash
 cd mbg-api/app
 pip install -r requirements.txt
-fastapi dev
+fastapi dev --port 5000
 ```
 
 Create environment variables using `mbg-api/app/.env`.
