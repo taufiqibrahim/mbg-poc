@@ -1,0 +1,6 @@
+fastapi
+fastapi[standard]
+psycopg2-binary
+pydantic-settings
+requests
+sqlalchemy
