@@ -6,14 +6,13 @@ import bbox from '@turf/bbox'
 // import { AppConfig } from '@/config/config'
 import Pin from '@/components/maps/pin'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { Sekolah, UpData, UpSimulatorMapsProps } from './types'
+import { Sekolah, UpSimulatorMapsProps } from './types'
 import { isochroneFillLayer, isochroneLineLayer, sekolahLayer, sekolahTextLabelLayer } from './layers'
 
 export default function UpSimulatorMaps(props: UpSimulatorMapsProps) {
 
   const { simulatorInput, simulatorOutput, onMarkerDragEnd } = props;
   const [marker, setMarker] = useState({ longitude: simulatorInput.longitude, latitude: simulatorInput.latitude })
-  const [upData, setUpData] = useState<UpData>()
   const [isochroneData, setIsochroneData] = useState(null)
   const [sekolahData, setSekolahData] = useState<FeatureCollection>()
   const mapRef = useRef<MapRef>()
