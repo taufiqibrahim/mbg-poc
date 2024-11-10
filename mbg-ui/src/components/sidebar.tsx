@@ -6,6 +6,9 @@ import Nav from './nav'
 import { cn } from '@/lib/utils'
 import { sidelinks } from '@/data/sidelinks'
 
+// @ts-ignore
+import {ReactComponent as Logo} from '@/assets/bgn_logo_48.svg?react'
+
 interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
     isCollapsed: boolean
     setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>
@@ -47,7 +50,8 @@ export default function Sidebar({
                     className='z-50 flex justify-between px-4 py-3 shadow-sm md:px-4'
                 >
                     <div className={`flex items-center ${!isCollapsed ? 'gap-2' : ''}`}>
-                        <svg
+                        <Logo />
+                        {/* <svg
                             xmlns='http://www.w3.org/2000/svg'
                             viewBox='0 0 256 256'
                             className={`transition-all ${isCollapsed ? 'h-6 w-6' : 'h-8 w-8'}`}
@@ -76,12 +80,12 @@ export default function Sidebar({
                                 strokeWidth='16'
                             ></line>
                             <span className='sr-only'>Website Name</span>
-                        </svg>
+                        </svg> */}
                         <div
                             className={`flex flex-col justify-end truncate ${isCollapsed ? 'invisible w-0' : 'visible w-auto'}`}
                         >
-                            <span className='font-medium'>Dashboard XYZ</span>
-                            <span className='text-xs'>Vite + ShadcnUI</span>
+                            <span className='font-medium'>Simulator UP MBG</span>
+                            <span className='text-xs'>UP MBG</span>
                         </div>
                     </div>
 

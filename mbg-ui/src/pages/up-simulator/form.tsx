@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form";
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { ReloadIcon } from '@radix-ui/react-icons';
+import { AppConfig } from '@/config/config'
+import { UpSimulatorFormProps } from './types'
+import { useEffect } from 'react';
 
 const RANGE_DISTANCE_KM = [1, 10]
 const DEFAULT_DISTANCE_KM = 5
@@ -20,24 +23,36 @@ const upSimulatorFormSchema = z.object({
 
 type UpSimulatorFormValues = z.infer<typeof upSimulatorFormSchema>
 
-export default function UpSimulatorForm(props: any) {
+export default function UpSimulatorForm(props: UpSimulatorFormProps) {
+
+  const { simulatorInput, handleFormSubmit, handleFormUpdate } = props
+
   const form = useForm<z.infer<typeof upSimulatorFormSchema>>({
     resolver: zodResolver(upSimulatorFormSchema),
     defaultValues: {
-      longitude: 106.660107,
-      latitude: -6.311977,
+      longitude: AppConfig.common.initialViewState.longitude,
+      latitude: AppConfig.common.initialViewState.latitude,
       distance: DEFAULT_DISTANCE_KM,
     },
+    values: simulatorInput,
   })
 
   function onSubmit(values: UpSimulatorFormValues) {
-    // console.log("child", values)
-    props.parentSubmitCallback(values)
+    handleFormSubmit(values)
   }
+
+  const _onchange = () => {
+    const values = form.getValues()
+    handleFormUpdate(values)
+  }
+
+  useEffect(() => {
+    console.log("Simulator input", simulatorInput)
+  }, [simulatorInput])
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+      <form onSubmit={form.handleSubmit(onSubmit)} onChange={_onchange} className='space-y-8'>
         <FormField
           control={form.control}
           name='longitude'
@@ -45,7 +60,7 @@ export default function UpSimulatorForm(props: any) {
             <FormItem>
               <FormLabel>Longitude</FormLabel>
               <FormControl>
-                <Input type="number" pattern="^\d*(\.\d{0,6})?$" {...field} />
+                <Input type="number" pattern="^\d*(\.\d{0,6})?$" {...field} value={simulatorInput.longitude} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -58,7 +73,7 @@ export default function UpSimulatorForm(props: any) {
             <FormItem>
               <FormLabel>Latitude</FormLabel>
               <FormControl>
-                <Input type="number" pattern="^\d*(\.\d{0,6})?$" {...field} />
+                <Input type="number" pattern="^\d*(\.\d{0,6})?$" {...field} value={simulatorInput.latitude} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -80,10 +95,10 @@ export default function UpSimulatorForm(props: any) {
                     onChange(vals[0]);
                   }}
                   onValueCommit={(vals) => {
-                    console.log('onValueCommit', vals)
-                    onChange(vals[0]);
+                    // console.log('onValueCommit', vals)
+                    onChange(vals[0])
                   }}
-                  value={[form.getValues("distance")]}
+                value={[form.getValues("distance")]}
                 />
               </FormControl>
               <FormDescription>
@@ -95,13 +110,12 @@ export default function UpSimulatorForm(props: any) {
         />
 
         {props.loading ? (
-          <Button className='w-80' disabled>
+          <Button className='w-full' disabled>
             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
             Memproses...
           </Button>
         ) : (
-          // <button onClick={() => setLoading(true)}>Click Me</button>
-          <Button className='w-80' type='submit'>Kalkulasi</Button>
+          <Button className='w-full' type='submit'>Kalkulasi</Button>
         )}
 
       </form>
