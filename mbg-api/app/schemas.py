@@ -6,6 +6,8 @@ class Sekolah(BaseModel):
     npsn: str
     name: str
     pd: int
+    bentuk_pendidikan: str
+    status_sekolah: str
     longitude: float = None
     latitude: float = None
 
@@ -13,7 +15,7 @@ class Sekolah(BaseModel):
 class UPCoverageQueryParams(BaseModel):
     longitude: float
     latitude: float
-    distance_km: float = Field(5, gt=1, le=10)
+    distance_km: float = Field(5, gte=1, le=10)
 
 
 class UPCoverageResponse(BaseModel):

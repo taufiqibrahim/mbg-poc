@@ -20,10 +20,8 @@ def predict_up_coverage(params: Annotated[UPCoverageQueryParams, Query()], db: S
 
     isochrone_geojson = json.dumps(isochrone["features"][0]["geometry"])
 
-    sql = f"""SELECT npsn, name, longitude, latitude, pd,
-        induk_kecamatan, kode_wilayah_induk_kecamatan, induk_kabupaten, kode_wilayah_induk_kabupaten, induk_provinsi, kode_wilayah_induk_provinsi,
-        bentuk_pendidikan, status_sekolah
-    FROM sekolah
+    sql = f"""SELECT npsn, nama AS name, longitude, latitude, pd, bentuk_pendidikan, status_sekolah
+    FROM sekolah_v2
     WHERE ST_INTERSECTS(geometry, ST_GeomFromGeoJSON('{isochrone_geojson}'))
     ORDER BY npsn
     """

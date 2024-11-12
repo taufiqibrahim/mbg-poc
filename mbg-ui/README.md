@@ -2,6 +2,8 @@
 
 ## Development
 
+Node version: 21
+
 ```bash
 cd mbg-ui
 npm install
