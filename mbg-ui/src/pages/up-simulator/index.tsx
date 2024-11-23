@@ -14,9 +14,8 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { DataTable, sekolahColumns } from './data-tables'
 import { CardDescription, CardTitle } from '@/components/ui/card'
+import { DataTable2, sekolahColumns } from './data-tables-2'
 
 
 export default function Dashboard() {
@@ -117,21 +116,28 @@ export default function Dashboard() {
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={40}>
+
+            {/* Summary */}
             <div className='h-fit m-1 pt-2 columns-2'>
-              <div className='p-2'>
+              <div className='p-4'>
                 <CardTitle>{summaryStats.totalPD}</CardTitle>
                 <CardDescription>Peserta didik</CardDescription>
               </div>
-              <div className='p-2'>
+              <div className='p-4'>
                 <CardTitle>{summaryStats.totalSekolah}</CardTitle>
                 <CardDescription>Sekolah</CardDescription>
               </div>
             </div>
-            <div className="py-1">
+
+            {/* Table */}
+            {/* <div className="py-1">
               <ScrollArea className='h-[200px] rounded-md p-2'>
                 <DataTable columns={sekolahColumns} data={simulatorOutput.data_sekolah} />
               </ScrollArea>
-            </div>
+            </div> */}
+
+            <DataTable2 columns={sekolahColumns} data={simulatorOutput.data_sekolah} />
+
           </ResizablePanel>
         </ResizablePanelGroup>
 

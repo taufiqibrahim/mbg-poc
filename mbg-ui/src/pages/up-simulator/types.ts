@@ -13,6 +13,8 @@ export interface Sekolah {
   npsn: string;
   name: string;
   pd: number;
+  bentuk_pendidikan: string;
+  status_sekolah: string;
   longitude: number;
   latitude: number;
 }
