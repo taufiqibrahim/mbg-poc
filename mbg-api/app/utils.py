@@ -2,8 +2,68 @@ import json
 import requests
 from settings import settings
 
+from typing import List, Tuple
 
-def get_isochrone_valhalla(longitude: float, latitude: float, distance_km: float):
+def _trans(value, index):
+    """
+    Copyright (c) 2014 Bruno M. Custódio
+    Copyright (c) 2016 Frederick Jansen
+    https://github.com/hicsail/polyline/commit/ddd12e85c53d394404952754e39c91f63a808656
+    """
+    byte, result, shift = None, 0, 0
+
+    while byte is None or byte >= 0x20:
+        byte = ord(value[index]) - 63
+        index += 1
+        result |= (byte & 0x1F) << shift
+        shift += 5
+        comp = result & 1
+
+    return ~(result >> 1) if comp else (result >> 1), index
+
+def _decode(expression, precision=5, order="lnglat", is3d=False):
+    """
+    Copyright (c) 2014 Bruno M. Custódio
+    Copyright (c) 2016 Frederick Jansen
+    https://github.com/hicsail/polyline/commit/ddd12e85c53d394404952754e39c91f63a808656
+
+    Modified to be able to work with 3D polylines and a specified coordinate order.
+    """
+    coordinates, index, lat, lng, z, length, factor = (
+        [],
+        0,
+        0,
+        0,
+        0,
+        len(expression),
+        float(10**precision),
+    )
+
+    while index < length:
+        lat_change, index = _trans(expression, index)
+        lng_change, index = _trans(expression, index)
+        lat += lat_change
+        lng += lng_change
+        coord = (lat / factor, lng / factor) if order == "latlng" else (lng / factor, lat / factor)
+        if not is3d:
+            coordinates.append(coord)
+        else:
+            z_change, index = _trans(expression, index)
+            z += z_change
+            coordinates.append((*coord, z / 100))
+
+    return coordinates
+
+def decode_polyline(
+    polyline: str, precision: int = 6, order: str = "lnglat"
+) -> List[Tuple[float, float]]:
+    """Decodes an encoded ``polyline`` string with ``precision`` to a list of coordinate tuples.
+    The coordinate ``order`` of the output can be ``lnglat`` or ``latlng``."""
+
+    return _decode(polyline, precision=precision, order=order, is3d=False)
+
+
+def get_valhalla_isochrone(longitude: float, latitude: float, distance_km: float):
     url = settings.isochrone_service_url
     fix_speed_kph = 40
     top_speed_kph = 60
@@ -74,3 +134,54 @@ def get_isochrone_valhalla(longitude: float, latitude: float, distance_km: float
     response = requests.get(url, json=request_payload)
     res = response.json()
     return res
+
+
+def get_valhalla_optimized_route(start_location, destinations):
+    url = settings.optimized_route_service_url
+    url = "https://valhalla1.openstreetmap.de/optimized_route?"
+    locations = []
+    locations.append(start_location)
+    locations += destinations
+    locations.append(start_location)
+
+    request_payload = {
+        "locations": locations,
+        "costing": "auto",
+        "units": "kilometers",
+        # "format": "osrm",
+        "shape_format": "geojson",
+        "voice_instructions": False,
+        "directions_type": "none",
+    }
+    response = requests.get(url, json=request_payload)
+
+    if response.status_code >= 400:
+        print(response.text)
+        return None
+    res = response.json()
+    return res
+
+
+def parse_valhalla_optimized_route(response):
+    legs = response.get('trip', {}).get('legs', [])
+    _geojson = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+
+    _features = []
+
+    for i, leg in enumerate(legs):
+        shape = leg['shape']
+        pline = decode_polyline(shape)
+        _features.append({
+            "type": "Feature",
+            "properties": {"id": i},
+            "geometry": {
+                "coordinates": pline,
+                "type": "LineString",
+            }
+        })
+
+    _geojson['features'] = _features
+    return _geojson
