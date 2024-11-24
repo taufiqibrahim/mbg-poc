@@ -47,10 +47,10 @@ export default function Sidebar({
                 {/* Header */}
                 <Layout.Header
                     sticky
-                    className='z-50 flex justify-between px-4 py-3 shadow-sm md:px-4'
+                    className='z-50 flex justify-between px-0 py-3 shadow-sm md:px-0'
                 >
-                    <div className={`flex items-center ${!isCollapsed ? 'gap-2' : ''}`}>
-                        <Logo />
+                    <div className={`flex items-center justify-center px-2 ${!isCollapsed ? 'gap-2' : ''}`}>
+                        <Logo style={{width: '40px', height: '40px'}} />
                         <div
                             className={`flex flex-col justify-end truncate ${isCollapsed ? 'invisible w-0' : 'visible w-auto'}`}
                         >
@@ -87,11 +87,11 @@ export default function Sidebar({
                     onClick={() => setIsCollapsed((prev) => !prev)}
                     size='icon'
                     variant='outline'
-                    className='absolute -right-5 top-1/2 z-50 hidden rounded-full md:inline-flex'
+                    className='absolute -right-3 top-1/2 z-50 hidden rounded-full md:inline-flex'
                 >
                     <IconChevronsLeft
                         stroke={1.5}
-                        className={`h-5 w-5 ${isCollapsed ? 'rotate-180' : ''}`}
+                        className={`h-4 w-4 ${isCollapsed ? 'rotate-180' : ''}`}
                     />
                 </Button>
             </Layout>

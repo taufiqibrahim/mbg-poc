@@ -7,7 +7,7 @@ import bbox from '@turf/bbox'
 import Pin from '@/components/maps/pin'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { Sekolah, UpSimulatorMapsProps } from './types'
-import { isochroneFillLayer, isochroneLineLayer, sekolahLayer, sekolahTextLabelLayer } from './layers'
+import { isochroneFillLayer, isochroneLineLayer, routeDirectionSymbolLayer, routeLayer, sekolahLayer, sekolahTextLabelLayer } from './layers'
 
 export default function UpSimulatorMaps(props: UpSimulatorMapsProps) {
 
@@ -15,6 +15,7 @@ export default function UpSimulatorMaps(props: UpSimulatorMapsProps) {
   const [marker, setMarker] = useState({ longitude: simulatorInput.longitude, latitude: simulatorInput.latitude })
   const [isochroneData, setIsochroneData] = useState(null)
   const [sekolahData, setSekolahData] = useState<FeatureCollection>()
+  const [routeData, setRouteData] = useState<FeatureCollection>()
   const mapRef = useRef<MapRef>()
 
 
@@ -45,12 +46,6 @@ export default function UpSimulatorMaps(props: UpSimulatorMapsProps) {
     console.log("Maps", simulatorOutput)
     // Check props.simulatorData
     if (simulatorOutput?.isochrone) {
-      // console.log(simulatorOutput)
-      //   // Set UP geojson
-      //   setUpData({
-      //     type: 'Feature',
-      //     geometry: { type: 'Point', coordinates: [props.simulatorData.longitude, props.simulatorData.latitude] }
-      //   })
 
       // Set UP geojson
       const features = convertToPointFeatures(simulatorOutput.data_sekolah);
@@ -69,12 +64,10 @@ export default function UpSimulatorMaps(props: UpSimulatorMapsProps) {
       // Check if isochrone available
       console.log("check isochroner", isochrone)
       if (isochrone !== null) {
-        // Update isochrone state
         setIsochroneData(isochrone)
         
         // Fitbound to isochrone
         const [minLng, minLat, maxLng, maxLat] = bbox(isochrone)
-        // console.log([minLng, minLat, maxLng, maxLat])
 
         if (mapRef && mapRef?.current) {
           console.log('fitbound')
@@ -87,6 +80,9 @@ export default function UpSimulatorMaps(props: UpSimulatorMapsProps) {
           );
         }
       }
+
+      // Add route data
+      setRouteData(simulatorOutput.routes)
 
     } else {
       console.log("no data")
@@ -116,12 +112,6 @@ export default function UpSimulatorMaps(props: UpSimulatorMapsProps) {
         <Pin size={20} />
       </Marker>
 
-      {/* {upData !== null && props?.simulatorData?.update === true && (
-        <Source id='up-source' type='geojson' data={upData}>
-          <Layer {...upLayer} />
-        </Source>
-      )} */}
-
       {isochroneData !== null && (
         <Source id="isochrone-source" type='geojson' data={isochroneData}>
           <Layer {...isochroneFillLayer} />
@@ -134,6 +124,14 @@ export default function UpSimulatorMaps(props: UpSimulatorMapsProps) {
         <Source id='sekolah-source' type='geojson' data={sekolahData}>
           <Layer {...sekolahLayer} />
           <Layer {...sekolahTextLabelLayer} />
+        </Source>
+      )}
+
+      {/* @ts-ignore */}
+      {routeData?.features?.length > 0 && (
+        <Source id='route-source' type='geojson' data={routeData}>
+          <Layer {...routeLayer} />
+          <Layer {...routeDirectionSymbolLayer} />
         </Source>
       )}
 

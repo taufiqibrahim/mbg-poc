@@ -1,6 +1,6 @@
 import axios from 'axios'
 import * as XLSX from 'xlsx'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Layout } from '@/components/custom/layout'
 
@@ -26,16 +26,20 @@ import { IconFileSpreadsheet } from '@tabler/icons-react'
 export default function Dashboard() {
   const VITE_BACKEND_SERVICE_BASE_URL = import.meta.env.VITE_BACKEND_SERVICE_BASE_URL
   const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
   const [simulatorInput, setSimulatorInput] = useState<UpSimulatorInput>({
     longitude: AppConfig.common.initialViewState.longitude,
     latitude: AppConfig.common.initialViewState.latitude,
     distance: 5.0,
+    includeRoute: false,
   })
+
+  const toastIdRef = useRef<string | null>(null)
+  const { toast, dismiss } = useToast()
 
   const [simulatorOutput, setSimulatorOutput] = useState<UpSimulatorOutput>({
     isochrone: null,
-    data_sekolah: []
+    data_sekolah: [],
+    routes: null
   })
 
   const [summaryStats, setSummaryStats] = useState<SummaryStats>({ totalSekolah: 0, totalPD: 0 })
@@ -48,22 +52,30 @@ export default function Dashboard() {
   const handleFormSubmit = (values: any) => {
     console.log("handleFormSubmit", values)
 
+    if (toastIdRef.current) {
+      dismiss(toastIdRef.current);
+    }
+
     setLoading(true)
     // call API
     const baseUrl = `${VITE_BACKEND_SERVICE_BASE_URL}/predict-up-coverage`
-    axios.get(`${baseUrl}?longitude=${values.longitude}&latitude=${values.latitude}&distance_km=${values.distance}`)
+    axios.get(`${baseUrl}?longitude=${values.longitude}&latitude=${values.latitude}&distance_km=${values.distance}&include_route=${values.includeRoute}`)
       .then((res) => {
         console.log("Response", res.data)
         setSimulatorOutput({ ...res.data })
       })
       .catch((err) => {
         console.log("Error calling API", err)
-        toast({
+
+        // Toast error
+        const { id } = toast({
           variant: "destructive",
           title: "Ups! Sepertinya ada masalah",
           description: "Silakan coba kembali beberapa saat lagi.",
           // action: <ToastAction altText="Try again">Try again</ToastAction>,
         })
+        toastIdRef.current = id
+
       })
       .finally(() => {
         setLoading(false)
@@ -93,6 +105,19 @@ export default function Dashboard() {
 
   useEffect(() => {
     updateSummaryStats()
+
+    if (simulatorOutput.routes == null && simulatorInput.includeRoute) {
+
+      // Toast error
+      const { id } = toast({
+        variant: "destructive",
+        title: "Rute tidak dapat dihitung",
+        description: "Jumlah sekolah terlalu banyak. Coba memperkecil radius untuk mengurangi jumlah sekolah",
+      })
+      toastIdRef.current = id
+
+    }
+
   }, [simulatorOutput])
 
   const handleExportExcel = () => {
@@ -122,7 +147,7 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-          <div className='pl-4 mx-3 overflow-auto'>
+          <div className='ml-4 mr-4 pl-1 overflow-auto'>
             <UpSimulatorForm simulatorInput={{ ...simulatorInput }} handleFormSubmit={handleFormSubmit} handleFormUpdate={handleFormUpdate} loading={loading} />
           </div>
         </div>
@@ -155,7 +180,7 @@ export default function Dashboard() {
               {/* Table */}
               <ScrollArea className='lg:w-full lg:pr-4 flex-grow p-2'>
                 <div className='flex flex-row flex-grow justify-between'>
-                  <div className='px-4 align-middle'>Data Sekolah</div>
+                  <div className='px-2 lg:px-4 lg:align-middle'>Data Sekolah</div>
                   <div className='px-4'>
                     {
                       (simulatorOutput.data_sekolah.length > 0) ? (

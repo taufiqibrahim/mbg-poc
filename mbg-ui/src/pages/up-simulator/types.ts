@@ -2,11 +2,13 @@ export interface UpSimulatorInput {
   longitude: number
   latitude: number
   distance: number
+  includeRoute: boolean
 }
 
 export interface UpSimulatorOutput {
   isochrone: any
   data_sekolah: Sekolah[]
+  routes: any
 }
 
 export interface Sekolah {
