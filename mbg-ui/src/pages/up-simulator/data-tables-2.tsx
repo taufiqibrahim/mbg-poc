@@ -1,4 +1,4 @@
-import DataTable, { createTheme, TableColumn } from 'react-data-table-component'
+import DataTable, { TableColumn } from 'react-data-table-component'
 import { Sekolah } from './types';
 
 export const sekolahColumns: TableColumn<Sekolah>[] = [
@@ -35,31 +35,6 @@ interface DataTableProps<TData> {
 }
 
 const paginationRowsPerPageOptions = [5,10,20,50]
-
-// createTheme(
-// 	'mbg',
-// 	{
-// 		text: {
-// 			// primary: '#268bd2',
-// 			// secondary: '#2aa198',
-// 		},
-//         rows: {
-//             style: {
-//                 fontSize: '8px',
-//                 fontWeight: 400,
-//                 // color: theme.text.primary,
-//                 // backgroundColor: theme.background.default,
-//                 // minHeight: '48px',
-//                 // '&:not(:last-of-type)': {
-//                 //     borderBottomStyle: 'solid',
-//                 //     borderBottomWidth: '1px',
-//                 //     borderBottomColor: theme.divider.default,
-//                 // },
-//             },
-//         },
-// 	},
-// 	'light',
-// );
 
 // Reference: https://github.com/jbetancur/react-data-table-component/blob/master/src/DataTable/styles.ts
 const customStyles = {
@@ -106,7 +81,6 @@ export function DataTable2<TData>({ columns, data }: DataTableProps<TData>): JSX
             fixedHeader
             fixedHeaderScrollHeight='300px'
             customStyles={customStyles}
-            // theme='mbg'
         />
     );
 }
@@ -147,7 +121,6 @@ export function DataTable2<TData>({ columns, data }: DataTableProps<TData>): JSX
 //             paginationRowsPerPageOptions={paginationRowsPerPageOptions}
 //             fixedHeader
 //             fixedHeaderScrollHeight='300px'
-//             // theme='mbg'
 //             customStyles={customStyles}
 // 		/>
 // 	);

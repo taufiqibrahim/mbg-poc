@@ -1,6 +1,5 @@
 // import { Map, Layer, Source, Marker } from 'react-map-gl/maplibre'
 import type { CircleLayer, FillLayer, LineLayer, SymbolLayer } from 'react-map-gl/maplibre'
-import arrowImage from './arrow.png'
 
 // UP location marker
 export const upLayer: CircleLayer = {
