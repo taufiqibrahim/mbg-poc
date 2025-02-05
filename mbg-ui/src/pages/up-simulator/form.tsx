@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 
 const RANGE_DISTANCE_KM = [1, 10]
 const DEFAULT_DISTANCE_KM = 5
-const RANGE_LONGITUDE = [99.0, 142.0]
+const RANGE_LONGITUDE = [95.0, 142.0]
 const RANGE_LATITUDE = [-11.0, 11.0]
 
 const upSimulatorFormSchema = z.object({
