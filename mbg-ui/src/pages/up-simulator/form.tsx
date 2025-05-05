@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from '@/components/ui/input'
 import { useForm } from "react-hook-form";
 import { Slider } from '@/components/ui/slider';
@@ -12,13 +13,14 @@ import { useEffect } from 'react';
 
 const RANGE_DISTANCE_KM = [1, 10]
 const DEFAULT_DISTANCE_KM = 5
-const RANGE_LONGITUDE = [99.0, 142.0]
+const RANGE_LONGITUDE = [95.0, 142.0]
 const RANGE_LATITUDE = [-11.0, 11.0]
 
 const upSimulatorFormSchema = z.object({
   longitude: z.coerce.number().min(RANGE_LONGITUDE[0]).max(RANGE_LONGITUDE[1]),
   latitude: z.coerce.number().min(RANGE_LATITUDE[0]).max(RANGE_LATITUDE[1]),
   distance: z.number().min(RANGE_DISTANCE_KM[0]).max(RANGE_DISTANCE_KM[1]).default(DEFAULT_DISTANCE_KM),
+  includeRoute: z.boolean()
 })
 
 type UpSimulatorFormValues = z.infer<typeof upSimulatorFormSchema>
@@ -98,13 +100,25 @@ export default function UpSimulatorForm(props: UpSimulatorFormProps) {
                     // console.log('onValueCommit', vals)
                     onChange(vals[0])
                   }}
-                value={[form.getValues("distance")]}
+                  value={[form.getValues("distance")]}
                 />
               </FormControl>
               <FormDescription>
                 Jarak maksimum pelayanan UP.
               </FormDescription>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='includeRoute'
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Checkbox onCheckedChange={() => field.onChange(!field.value)} checked={field.value} />
+              </FormControl>
+              <FormLabel> Kalkulasi rute</FormLabel>
             </FormItem>
           )}
         />

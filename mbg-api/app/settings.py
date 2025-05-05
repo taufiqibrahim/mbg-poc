@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     sqlalchemy_database_url: str
 
     isochrone_service_url: str
+    optimized_route_service_url: str
 
     model_config = model_config
 

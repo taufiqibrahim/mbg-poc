@@ -26,22 +26,39 @@ export const sekolahLayer: CircleLayer = {
     }
 }
 
+export const routeLayer: LineLayer = {
+    id: 'route',
+    type: 'line',
+    source: 'route-source',
+    layout: {
+        "line-join": 'miter',
+    },
+    paint: {
+        "line-color": "red",
+    }
+}
+
+export const routeDirectionSymbolLayer: SymbolLayer = {
+    id: 'route',
+    type: 'symbol',
+    source: 'route-source',
+    layout: {
+        'symbol-placement': 'line',
+        'symbol-spacing': 50,
+        'icon-image': 'arrow',
+        'icon-size': 0.5,
+    }
+}
+
 export const sekolahTextLabelLayer: SymbolLayer = {
     id: 'sekolah-location-text-symbol',
     type: 'symbol',
     source: 'sekolah-source',
     'layout': {
-        // "text-field": "$npsn",
         "text-field": [
             "format",
             ['get', 'name'], { "font-scale": 1 },
         ],
-        // 'text-field': [
-        //   // 'npsn'
-        //   // 'number-format',
-        //   ['get', 'npsn'],
-        //   // { 'min-fraction-digits': 1, 'max-fraction-digits': 1 }
-        // ],
         'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
         'text-size': 10
     },
