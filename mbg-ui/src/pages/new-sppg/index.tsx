@@ -1,8 +1,4 @@
-import { useNavigate } from 'react-router-dom'
-import { Button } from '@/components/custom/button'
-
 export default function NotFoundError() {
-    const navigate = useNavigate()
     const newUrl = "http://sppggeomapping.vercel.app/"
 
     return (
